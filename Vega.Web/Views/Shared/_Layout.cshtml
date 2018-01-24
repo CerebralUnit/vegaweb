@@ -1,0 +1,155 @@
+﻿<!DOCTYPE html>
+<html ng-app="vega" ng-controller="globalCtrl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Vega.Web</title>
+         <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.6/angular-material.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.4.3/css/foundation.min.css" crossorigin="anonymous" />
+    <style>
+        .tab-menu {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            background: #101c21;
+            display: flex;
+            justify-content: center;
+            align-items: stretch;
+            flex-direction: row;
+        }
+            .tab-menu > a {
+                display: flex;
+                align-items: center;
+                flex: 1;
+                text-align: center;
+                color: #ccc;
+                font-size: 9px;
+                justify-content: center;
+                text-transform: uppercase;
+                font-family: Arial, Helvetica, sans-serif; 
+                border-top: 3px solid transparent;
+            }
+                .tab-menu > a.active {
+                    border-top-color: #31b2d6;
+                    background: #091317;
+                }
+            .tab-menu  webicon{
+                display:flex;
+                height: 20px;
+                margin: 4px auto 5px;
+
+            }
+            .tab-menu > div.active {
+                border-top-color: #fd00af;
+                color: #fd00af;
+                background: rgba(0,0,0,0.1);
+                color: #fff;
+                border-top-color: #8500ff;
+                background: #000000;
+                color: #31b2d6;
+                border-top-color: #31b2d6;
+                background: #080808;
+            }
+    </style>
+    <environment include="Development">
+        <!-- Compressed CSS -->
+
+        <link rel="stylesheet" href="~/css/site.css" />
+    </environment>
+  
+</head>
+<body>
+
+    <div class="header-top" ng-class="{summary: location === '/', exchanges: location === '/exchanges' , portfolio: location === '/portfolio'}">
+        <div class="logo">
+            <img width="24" height="24" src="/images/vega-logo.svg" alt="" />
+        </div>
+        <md-menu md-position-mode="target-right target" ng-cloak>
+          <md-button aria-label="Open demo menu" class="md-icon-button" ng-click="$mdMenu.open($event)">
+            <webicon icon="ion:ios-settings-strong" />
+          </md-button>
+          <md-menu-content width="4" >
+            <md-menu-item ng-repeat="item in [1, 2, 3]">
+              <md-button ng-click="ctrl.announceClick($index)">
+                  <div layout="row" flex>
+                    <p flex>Option {{item}}</p>
+                    <md-icon md-menu-align-target md-svg-icon="call:portable-wifi-off" style="margin: auto 3px auto 0;"></md-icon>
+                  </div>
+              </md-button>
+            </md-menu-item>
+          </md-menu-content>
+        </md-menu>
+       
+    </div>
+    <div class="grid-x body-content">
+        @RenderBody()
+    </div>
+    <div class="tab-menu">
+        <a href="#/" ng-class="{active: location === '/'}"><div><webicon icon="ion:ios-home"></webicon><div>Summary</div></div></a>
+
+
+        <a href="#/exchanges" ng-class="{active: location === '/exchanges'}"><div><webicon icon="ion:arrow-graph-up-right"></webicon><div>Exchanges</div></div></a>
+        <a href="#/portfolio" ng-class="{active: location === '/portfolio'}"><div><webicon icon="ion:social-bitcoin"></webicon><div>Portfolio</div></div></a>
+        <a href="#/trade" ng-class="{active: location === '/trade'}"><div><webicon icon="entypo:swap"></webicon><div>Trade</div></div></a>
+    </div>
+    <link href="~/css/nganimate.css" rel="stylesheet" />
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.8/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.8/angular-animate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.8/angular-route.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular-messages.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.6/angular-material.min.js"></script>
+          <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular-aria.js"></script> 
+    <script type="text/javascript" src="//cdn.rawgit.com/icons8/bower-webicon/v0.10.7/angular-webicon.min.js"></script>
+
+
+    <script type="text/javascript" src="/js/ng-fx.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <!-- Compressed JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.4.3/js/foundation.min.js" crossorigin="anonymous"></script>
+
+    <script>
+        var vega = angular.module('vega', ['webicon', 'ngRoute', 'ngFx', 'ngMaterial']);
+        vega.controller('globalCtrl', function ($scope, $location) {
+            $scope.pages = {
+                "/": 0,
+                "/exchanges": 1,
+                "/portfolio": 2,
+                "/trade": 3
+            }
+            $scope.location = $location.path();
+            $scope.prevLocation = 0;
+            console.log($scope.pages[$scope.location])
+            $scope.$on('$routeChangeSuccess', function () {
+                $scope.prevLocation = $scope.location;
+                $scope.location = $location.path();
+            });
+          
+            $scope.state = {
+                page: $scope.pages.summary
+            };
+
+        });
+        vega.config(function ($routeProvider, $locationProvider) {
+            $locationProvider.hashPrefix('');
+            $routeProvider
+                .when("/", {
+                    templateUrl: "/templates/summary.html"
+                })
+                .when("/exchanges", {
+                    templateUrl: "/templates/exchanges.html"
+                })
+                .when("/portfolio", {
+                    templateUrl: "/templates/portfolio.html"
+                })
+                .when("/trade", {
+                    templateUrl: "/templates/trade.html"
+                });
+        });
+    </script>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

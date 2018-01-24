@@ -1,0 +1,302 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+} 
+<style>
+    @@import url('https://fonts.googleapis.com/css?family=Work+Sans:200');
+
+    body {
+        background: #313c42;
+        background: #293d48;
+        color: #fff;
+        font-family: 'Work Sans', sans-serif;
+    }
+    .header {
+        min-height: 250px;
+        padding-top: 80px;
+    }
+    .exchange-header.header {
+        min-height:150px;
+        position:relative;
+        text-align:left;
+        background: linear-gradient(to bottom, #1f124d, #5633D7);
+    }
+    .exchange-header webicon {
+        width: 40px;
+        height: 40px;
+        position: absolute;
+        bottom: -11px;
+        background: rgba(243, 243, 243, 0.9);
+        border-radius: 50%;
+        padding: 7px;
+        display: block;
+        right: 12px;
+        color: #162329;
+    }
+    .main-header {
+     
+        background: linear-gradient(to top, #a70073, #780454);
+        background: linear-gradient(to bottom,#000, #290873 50%);
+        background: linear-gradient(to bottom, #004cbd, #31b2d6 40%);
+    }
+    .header-top {
+        height: 50px;
+        margin: 0;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 3;
+        padding: 0 16px;
+        background: rgba(25, 125, 206, 0.87);
+        transition: background 430ms ease-out;
+    }
+        .header-top.exchanges {
+                background: rgba(47, 27, 127, 0.87);
+        }
+       .header-top.portfolio {
+    background: rgb(67, 21, 75);
+}
+    .portfolio-header.header {
+     min-height:150px;
+       background: linear-gradient(to bottom, #0c0f2b 0%, #992277 88%);
+    }
+    .total-balance {
+        font-size: 40px;
+        font-weight: 300;
+        text-align: center;
+        line-height: 23px;
+    }
+    .totals-label{
+        font-size: 14px;
+    }
+    .currency-symbol{
+        position:relative;
+        top:-0.5em;
+        font-size:60%;
+    }
+    h1, h2, h3, h4, h5,h6{
+        text-transform:uppercase;
+    }
+    /*https://pbs.twimg.com/media/DSJF8dyX4AMzo9M.jpg*/
+    .list > h4 {
+        font-size: 9px;
+        background: #182429;
+        background: #162329;
+        margin: 0;
+        padding: 8px 16px;
+        border-bottom: 1px solid #101c21;
+    }
+    .list ul {
+        background: #162329;
+        margin: 0 0 16px;
+        padding: 0;
+        display: block;
+    }
+    .main-body{
+        padding: 16px;
+    }
+    .exchange-amount{
+        display:block;
+        float:right;
+        text-align:right;
+    }
+    span.exchange-name {
+        font-size: 18px;
+        color: #fff;
+        font-family: "Work Sans";
+    }
+    .list li {
+        list-style-type: none;
+        padding: 16px;
+        font-size: 10px;
+        border-bottom: 1px solid #101c21;
+        font-family: Arial, Helvetica, sans-serif;
+        color: #52555a
+    }
+    .header-top md-menu {
+        display: inline-block;
+        padding: 9px 0 9px;
+        float: right;
+
+    }
+    .header-top .md-button.md-icon-button{
+        width: auto;
+    margin: 0;
+    padding:0;
+    }
+    .header-top .webicon svg {
+        width: 17px;
+    }
+    md-menu-content {
+        background: #2a3d49;
+        color: #fff;
+    }
+    md-menu-content.md-default-theme md-menu-item, md-menu-content md-menu-item {
+        color: rgba(255, 255, 255, 0.87)
+    }
+    .graph-header {
+        font-size: 11px;
+        color: #545b6a;
+        padding: 8px 16px;
+        border-bottom: 1px solid #182429;
+    } .logo {
+        float: left;
+        padding: 12px 0;
+    }
+    .sub-display{
+        font-size: 11px;
+        margin-top:16px;
+    } 
+    .main-graph {
+        background: #213039;
+        width: 100%;
+        min-height: 200px;
+        border-radius: 3px;
+        margin-top: -40px;
+        margin-bottom: 16px;
+    }
+    .sub-display-value{
+        font-size:17px;
+    }
+    .graph-header > webicon {
+        width: 14px;
+        float: left;
+        margin-right: 8px;
+        margin-top:2px;
+    }
+    .chart-live{
+        display:block; float:right;
+    }
+    .chart-live .indicator{
+        border-radius:50%;
+        background:#3ed801;
+        width: 6px;
+        height:6px;
+        display:block;
+        float:right;
+        margin: 5px 0 5px 8px;
+    }
+    .date-month,
+    .date-day{
+        line-height: 13px;
+        color:#f2f2f2;
+        display:block;
+        text-align:center;
+    }
+    .transaction-date{
+        display:block;
+        float:left;
+    }
+    .date-month {
+        display: block;
+        font-size: 8px;
+    }
+    .date-day{
+        font-size: 14px
+    }
+    .transaction-status > span{
+        display:block;
+        text-align:center;
+            letter-spacing: 1px;
+    }
+    .transaction-confirmation{
+        font-size: 7.5px;
+        letter-spacing:0.2px !important;
+    }
+    .transaction-exchange {
+        display: block;
+        float: left;
+        padding: 0;
+        margin: 5px 16px 0 0;
+    }
+    .transaction-status{
+        float:left;
+    }
+    .list li:after{
+        content: ' ';
+        display:table;
+        clear:both;
+    }
+    .transaction-amount{
+        float:right;
+        display:block;
+    }
+    .positive {
+        color: #3ed801;
+    }
+    .view {
+        position: absolute;
+        top: 0;
+        width: 100%;
+        transition: 300ms;
+        background: #293d48;
+    }
+    /* First animation*/
+.next.view.ng-enter{
+  transform:translateX(100%);
+}
+
+.next.view.ng-enter.ng-enter-active {
+    transform: translateX(0)
+}
+
+.next.view.ng-leave{
+  transform:translateX(0);
+}
+
+.next.view.ng-leave.ng-leave-active {
+    transform: translateX(100%);
+}
+
+/* Second animation*/
+.prev.view.ng-enter {
+    transform: translateX(-100%);
+}
+
+.prev.view.ng-enter.ng-enter-active{
+  transform:translateX(0);
+}
+
+    .view.ng-leave {
+        transform: scale(1) !important;
+    }
+
+ .view.ng-leave.ng-leave-active {
+     opacity:0;
+    transform: scale(0.6) !important;
+}
+ 
+/* Third animation*/
+.third .view.ng-enter{
+  top: 100%;
+}
+
+.third .view.ng-enter.ng-enter-active{
+  top: 0%;
+}
+
+.third .view.ng-leave{
+  top: 0%;
+}
+
+.third .view.ng-leave.ng-leave-active{
+  top: -100%;
+}
+    .exchanges.list li {
+        border-bottom-color: #293d48;
+    }
+</style>
+
+<div class="cell view" ng-view  ng-class="{next: pages[location] > pages[prevLocation], prev: pages[location] < pages[prevLocation]}">
+   
+</div>
+
+@section scripts{ 
+<script>
+   
+    vega.controller('overviewCtrl', function ($scope) {
+
+
+    });
+    </script>
+}
