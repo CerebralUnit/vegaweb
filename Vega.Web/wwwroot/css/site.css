@@ -1,1 +1,382 @@
-﻿ 
+﻿@import url('https://fonts.googleapis.com/css?family=Work+Sans:200');
+html{
+    height: 100%;
+}
+html,body{
+    min-height: 100%;
+    overflow-x:hidden;
+    overflow-y:hidden;
+
+}
+body {
+    background: #313c42;
+    background: #293d48;
+    color: #fff;
+    font-family: 'Work Sans', sans-serif; 
+    z-index: -2;
+
+}
+.body-content {
+
+    padding-bottom:50px
+}
+.header {
+    min-height: 250px;
+    padding-top: 80px;
+}
+
+.exchange-header.header {
+    min-height: 150px;
+    position: relative;
+    text-align: left;
+    background: linear-gradient(to bottom, #1f124d, #5633D7);
+}
+
+.exchange-header webicon {
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    bottom: -11px;
+    background: rgba(243, 243, 243, 0.9);
+    border-radius: 50%;
+    padding: 7px;
+    display: block;
+    right: 12px;
+    color: #162329;
+}
+
+.main-header {
+    background: linear-gradient(to top, #a70073, #780454);
+    background: linear-gradient(to bottom,#000, #290873 50%);
+    background: linear-gradient(to bottom, #004cbd, #31b2d6 40%);
+}
+
+.header-top {
+    height: 50px;
+    margin: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 3;
+    padding: 0 16px;
+    background: rgba(25, 125, 206, 0.87);
+    transition: background 430ms ease-out;
+}
+
+    .header-top.exchanges {
+        background: rgba(47, 27, 127, 0.87);
+    }
+
+    .header-top.portfolio {
+        background: rgb(67, 21, 75);
+    }
+
+.tab-menu {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 50px;
+    background: #101c21;
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    flex-direction: row;
+    z-index: 10000;
+}
+
+    .tab-menu > a {
+        display: flex;
+        align-items: center;
+        flex: 1;
+        text-align: center;
+        color: #ccc;
+        font-size: 9px;
+        justify-content: center;
+        text-transform: uppercase;
+        font-family: Arial, Helvetica, sans-serif;
+        border-top: 3px solid transparent;
+    }
+
+        .tab-menu > a.active {
+            border-top-color: #31b2d6;
+            background: #091317;
+        }
+
+    .tab-menu webicon {
+        display: flex;
+        height: 20px;
+        margin: 4px auto 5px;
+    }
+
+    .tab-menu > div.active {
+        border-top-color: #fd00af;
+        color: #fd00af;
+        background: rgba(0,0,0,0.1);
+        color: #fff;
+        border-top-color: #8500ff;
+        background: #000000;
+        color: #31b2d6;
+        border-top-color: #31b2d6;
+        background: #080808;
+    }
+
+.portfolio-header.header {
+    min-height: 150px;
+    background: linear-gradient(to bottom, #0c0f2b 0%, #992277 88%);
+}
+
+.total-balance {
+    font-size: 40px;
+    font-weight: 300;
+    text-align: center;
+    line-height: 23px;
+}
+
+.totals-label {
+    font-size: 14px;
+}
+
+.currency-symbol {
+    position: relative;
+    top: -0.5em;
+    font-size: 60%;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    text-transform: uppercase;
+}
+/*https://pbs.twimg.com/media/DSJF8dyX4AMzo9M.jpg*/
+.list > h4 {
+    font-size: 9px;
+    background: #182429;
+    background: #162329;
+    margin: 0;
+    padding: 8px 16px;
+    border-bottom: 1px solid #101c21;
+}
+
+.list ul {
+    background: #162329;
+    margin: 0 0 16px;
+    padding: 0;
+    display: block;
+}
+
+.main-body {
+    padding: 0 16px;
+}
+
+.exchange-amount {
+    display: block;
+    float: right;
+    text-align: right;
+}
+
+span.exchange-name {
+    font-size: 18px;
+    color: #fff;
+    font-family: "Work Sans";
+}
+
+.list li {
+    list-style-type: none;
+    padding: 0 16px;
+    font-size: 10px;
+    border-bottom: 1px solid #101c21;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #52555a;
+    display: flex;
+    height: 60px;
+    justify-content: center;
+    align-items: center;
+}
+.list > li > span {
+    flex: 1;
+}
+.header-top md-menu {
+    display: block;
+    padding: 9px 0 9px;
+    float: right;
+}
+
+.header-top .md-button.md-icon-button {
+    width: auto;
+    margin: 0;
+    padding: 0;
+}
+
+.header-top .webicon svg {
+    width: 17px;
+}
+
+md-menu-content {
+    background: #2a3d49;
+    color: #fff;
+}
+
+    md-menu-content.md-default-theme md-menu-item, md-menu-content md-menu-item {
+        color: rgba(255, 255, 255, 0.87)
+    }
+
+.graph-header {
+    font-size: 11px;
+    color: #545b6a;
+    padding: 8px 16px;
+    border-bottom: 1px solid #182429;
+}
+
+.logo {
+    float: left;
+    padding: 12px 0;
+}
+
+.sub-display {
+    font-size: 11px;
+    margin-top: 16px;
+}
+
+.main-graph {
+    background: #213039;
+    width: 100%;
+    min-height: 200px;
+    border-radius: 3px;
+    margin-top: -25px;
+    margin-bottom: 16px;
+}
+
+.sub-display-value {
+    font-size: 17px;
+}
+
+.graph-header > webicon {
+    width: 14px;
+    float: left;
+    margin-right: 8px;
+    margin-top: 2px;
+}
+
+.chart-live {
+    display: block;
+    float: right;
+}
+
+    .chart-live .indicator {
+        border-radius: 50%;
+        background: #3ed801;
+        width: 6px;
+        height: 6px;
+        display: block;
+        float: right;
+        margin: 5px 0 5px 8px;
+    }
+
+.date-month, .date-day {
+    line-height: 13px;
+    color: #f2f2f2;
+    display: block;
+    text-align: center;
+}
+
+.transaction-date { 
+    max-width: 32px;
+    padding-right: 16px;
+}
+
+.date-month {
+    display: block;
+    font-size: 8px;
+}
+
+.date-day {
+    font-size: 14px
+}
+
+.transaction-status > span {
+    display: block; 
+    letter-spacing: 1px;
+}
+
+.transaction-confirmation {
+    font-size: 7.5px;
+    letter-spacing: 0.2px !important;
+}
+
+.transaction-exchange {
+    display: block; 
+    padding: 0;
+    max-width:16px;
+    margin: 0 16px 0 0;
+}
+.exchange-add {
+    bottom: -11px;
+    right: 12px;
+    color: #f932a9;
+    font-size: 13px;
+    font-weight: bold;
+    text-align: right;
+    display: block;
+    width: 100%;
+    padding: 16px 16px 0;
+}
+.exchange-header .total-balance {
+    font-size: 30px;
+} 
+.list li:after {
+    content: ' ';
+    display: table;
+    clear: both;
+}
+
+.transaction-amount {
+    text-align: right; 
+}
+
+.positive {
+    color: #3ed801;
+}
+
+.view {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    transition: transform 300ms, opacity 300ms;
+    background: #293d48;
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 50px;
+    z-index: 1 !important;
+    transform: scale(1) translateX(0) translateZ(0);
+}
+
+.next.view.ng-enter {
+    transform: scale(1) translateX(100%) translateZ(0);
+}
+    .next.view.ng-enter.ng-enter-active {
+        transform: scale(1) translateX(0) translateZ(0);
+    }
+.prev.view.ng-enter {
+    transform: scale(1) translateX(-100%) translateZ(0);
+}
+    .prev.view.ng-enter.ng-enter-active {
+        transform: scale(1) translateX(0) translateZ(0);
+    }
+
+.view.ng-leave {
+    transform: scale(1) translateZ(0) !important;
+    z-index: -1 !important;
+}
+
+    .view.ng-leave.ng-leave-active {
+        opacity: 0;
+        transform: scale(0.6) translateZ(0)  !important;
+        z-index: -1 !important;
+    }
+ 
+.exchanges.list li {
+    border-bottom-color: #293d48;
+}
