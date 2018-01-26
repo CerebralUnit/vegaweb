@@ -117,6 +117,89 @@
             };
 
         });
+        vega.controller('exchangeCtrl', function ($scope) {  
+            $scope.tabs = {
+                active: 'mine'
+            }
+            $scope.exchanges = [{ 
+                "name": "ANXPRO"
+            },
+            { 
+                "name": "BL3P"
+            },
+            { 
+                "name": "BTC-E"
+            },
+            { 
+                "name": "BTCChina"
+            },
+            { 
+                "name": "Binance"
+            },
+            { 
+                "name": "Bitbay"
+            },
+            { 
+                "name": "Bitfinex"
+            },
+            { 
+                "name": "Bitmarket"
+            },
+            { 
+                "name": "Bitstamp"
+            },
+            { 
+                "name": "Bittrex"
+            },
+            { 
+                "name": "Bleutrade"
+            },
+            { 
+                "name": "Bter"
+            },
+            { 
+                "name": "GDAX"
+            },
+            { 
+                "name": "Cryptopia"
+            },
+            { 
+                "name": "EXMO"
+            },
+            { 
+                "name": "Ether Delta"
+            },
+            { 
+                "name": "Gate.io"
+            },
+            { 
+                "name": "Gatecoin"
+            },
+            { 
+                "name": "Gemini"
+            },
+            { 
+                "name": "HitBtc"
+            },
+            { 
+                "name": "Huobi"
+            },
+            { 
+                "name": "ItBit"
+            },
+            { 
+                "name": "Kraken"
+            },
+            { 
+                "name": "Kucoin"
+            },
+            { 
+                "name": "Poloniex"
+            },
+            { 
+                "name": "QUOINE"
+            }]
+        });
         vega.config(function ($routeProvider, $locationProvider) {
             $locationProvider.hashPrefix('');
             $routeProvider
@@ -124,6 +207,7 @@
                     templateUrl: "/templates/summary.html"
                 })
                 .when("/exchanges", {
+                    controller: 'exchangeCtrl',
                     templateUrl: "/templates/exchanges.html"
                 })
                 .when("/portfolio", {
