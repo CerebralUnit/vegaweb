@@ -75,7 +75,7 @@
     @*<script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.4.3/js/foundation.min.js" crossorigin="anonymous"></script>*@
 
     <script>
-        var vega = angular.module('vega', ['webicon', 'ngRoute', 'ngFx', 'ngMaterial', 'ngTouch']);
+        var vega = angular.module('vega', ['webicon', 'ngRoute','ngAnimate', 'ngFx', 'ngMaterial', 'ngTouch']);
         vega.controller('globalCtrl', function ($scope, $location) {
             $scope.location = $location.path();
             $scope.prevLocation = 0;
@@ -117,87 +117,116 @@
             };
 
         });
+        vega.filter('nameFilter', function(){
+            return function(objects, criteria){
+                var filterResult = new Array();
+                if(!criteria)
+                    return objects;
+
+                for(index in objects) {
+                    if(objects[index].name.toLowerCase().indexOf(criteria.toLowerCase()) != -1) // filter by name only
+                        filterResult.push(objects[index]);
+                }
+                console.log(filterResult);
+                return filterResult;  
+            }    
+        });
         vega.controller('exchangeCtrl', function ($scope) {  
+
             $scope.tabs = {
                 active: 'mine'
             }
+            $scope.exchangeFilter = {mine: true};
+            $scope.filters = {
+                exchange: ''
+            };
             $scope.exchanges = [{ 
-                "name": "ANXPRO"
+                "name": "ANXPRO",
+                "mine": false
             },
             { 
-                "name": "BL3P"
+                "name": "BL3P",
+                "mine": false
             },
             { 
-                "name": "BTC-E"
+                "name": "BTC-E",
+                "mine": false
             },
             { 
-                "name": "BTCChina"
+                "name": "BTCChina",
+                "mine": false
             },
             { 
-                "name": "Binance"
+                "name": "Binance",
+                "mine": true
             },
             { 
-                "name": "Bitbay"
+                "name": "Bitbay",
+                "mine": false
+            },  
+            { 
+                "name": "Bitstamp",
+                "mine": false
             },
             { 
-                "name": "Bitfinex"
+                "name": "Bittrex",
+                "mine": true
             },
             { 
-                "name": "Bitmarket"
+                "name": "Bleutrade",
+                "mine": false
             },
             { 
-                "name": "Bitstamp"
+                "name": "Bter",
+                "mine": false
             },
             { 
-                "name": "Bittrex"
+                "name": "GDAX",
+                "mine": false
             },
             { 
-                "name": "Bleutrade"
+                "name": "Cryptopia",
+                "mine": true
             },
             { 
-                "name": "Bter"
+                "name": "EXMO",
+                "mine": false
             },
             { 
-                "name": "GDAX"
+                "name": "Ether Delta",
+                "mine": false
             },
             { 
-                "name": "Cryptopia"
+                "name": "Gate.io",
+                "mine": true
             },
             { 
-                "name": "EXMO"
+                "name": "Gatecoin",
+                "mine": false
             },
             { 
-                "name": "Ether Delta"
+                "name": "Gemini",
+                "mine": false
             },
             { 
-                "name": "Gate.io"
+                "name": "HitBtc",
+                "mine": false
             },
             { 
-                "name": "Gatecoin"
+                "name": "Huobi",
+                "mine": false
+            }, 
+            { 
+                "name": "Kraken",
+                "mine": false
             },
             { 
-                "name": "Gemini"
+                "name": "Kucoin",
+                "mine": true
             },
             { 
-                "name": "HitBtc"
-            },
-            { 
-                "name": "Huobi"
-            },
-            { 
-                "name": "ItBit"
-            },
-            { 
-                "name": "Kraken"
-            },
-            { 
-                "name": "Kucoin"
-            },
-            { 
-                "name": "Poloniex"
-            },
-            { 
-                "name": "QUOINE"
+                "name": "Poloniex",
+                "mine": false
             }]
         });
         vega.config(function ($routeProvider, $locationProvider) {

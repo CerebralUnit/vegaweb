@@ -401,6 +401,7 @@ input[type=search] {
     .next.view.ng-enter.ng-enter-active {
         transform: scale(1) translateX(0) translateZ(0);
     }
+
 .prev.view.ng-enter {
     transform: scale(1) translateX(-100%) translateZ(0);
 }
@@ -418,7 +419,50 @@ input[type=search] {
         transform: scale(0.6) translateZ(0)  !important;
         z-index: -1 !important;
     }
- 
+.list-item.ng-enter-stagger,
+.list-item.ng-leave-stagger {
+    -webkit-transition-delay: 0.03s;
+    -moz-transition-delay: 0.03s;
+    -ms-transition-delay: 0.03s;
+    -o-transition-delay: 0.03s;
+    transition-delay: 0.03s;
+    -webkit-transition-duration: 0;
+    -moz-transition-duration: 0;
+    -ms-transition-duration: 0;
+    -o-transition-duration: 0;
+    transition-duration: 0
+
+}
+.list-item.ng-enter,
+.list-item.ng-leave {
+    -webkit-transition: 0.2s linear all;
+    -moz-transition: 0.2s linear all;
+    -ms-transition: 0.2s linear all;
+    -o-transition: 0.2s linear all;
+    transition: 0.2s linear all;
+}
+.list-item.ng-enter {
+    height: 0;
+    transform: scale(1) translateX(100%) translateZ(0)
+}
+
+.list-item.ng-enter.ng-enter-active {
+    height: 60px;
+    transform: scale(1) translateX(0) translateZ(0)
+}
+.list-item.ng-leave {
+    height: 60px;
+    opacity: 1;
+    transform: scale(1) translateX(0) translateZ(0)
+    
+}
+.list-item.ng-leave.ng-leave-active { 
+    height: 0;
+    opacity: 0;
+    overflow:hidden;
+    transform: scale(1) translateX(-100%) translateZ(0);
+   
+}
 .exchanges.list li {
     border-bottom-color: #293d48;
 }
@@ -441,6 +485,9 @@ input[type=search] {
     .icon.bitbay {
         background-position: -80px 0;
     }
+    .icon.bitstamp{
+        background-position: 0 -48px;
+    }
     .icon.btcchina {
         background-position: -48px 0;
     }
@@ -451,29 +498,34 @@ input[type=search] {
         background-position: 0 -16px;
     }
     .icon.bleutrade {
-        background-position: 0 -16px;
+        background-position: -16px -16px;
     }
     .icon.gdax {
-        background-position: -96px -16px;    }
+        background-position: -48px -16px;    
+    }
     .icon.cryptopia {
-        background-position: -64px -16px;    }
+        background-position: -64px -16px;    
+    }
     .icon.bter {
-        background-position: -32px -16px;    }
+        background-position: -32px -16px;    
+    }
     .icon.hitbtc {
-        background-position: -32px -32px;    }
+        background-position: -32px -32px;    
+    }
     .icon.gemini {
-        background-position: -32px -16px;    }
+        background-position: -16px -32px;    
+    }
     .icon.gatecoin {
-        background-position: 0 0;
+        background-position: -32px 0;
     }
     .icon.gateio {
-        background-position: ;
+        background-position: -96px 0;
     }
     .icon.exmo {
-        background-position: 0 0;
+        background-position: -80px -16px;
     }
     .icon.ether-delta {
-        background-position: 0 0;
+        background-position: -96px -16px;
     }
     .icon.kucoin {
         background-position:  -80px -32px;
@@ -487,3 +539,11 @@ input[type=search] {
     .icon.huobi {
         background-position:  -48px -32px;
     }
+li.list-item.default {
+    background: #273138
+
+}
+.list-item.default .exchange-name {
+    color: #5d656b
+
+}
