@@ -467,7 +467,7 @@ input[type=search] {
         background-position: 0 0;
     }
     .icon.gateio {
-        background-position: 0 0;
+        background-position: ;
     }
     .icon.exmo {
         background-position: 0 0;
@@ -476,14 +476,14 @@ input[type=search] {
         background-position: 0 0;
     }
     .icon.kucoin {
-        background-position: 0 0;
+        background-position:  -80px -32px;
     }
     .icon.kraken {
-        background-position: 0 0;
+        background-position:  -64px -32px;
     }
     .icon.poloniex {
-        background-position: 0 0;
+        background-position:  -96px -32px;
     }
     .icon.huobi {
-        background-position: 0 0;
+        background-position:  -48px -32px;
     }
