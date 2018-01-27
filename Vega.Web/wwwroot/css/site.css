@@ -421,11 +421,11 @@ input[type=search] {
     }
 .list-item.ng-enter-stagger,
 .list-item.ng-leave-stagger {
-    -webkit-transition-delay: 0.03s;
-    -moz-transition-delay: 0.03s;
-    -ms-transition-delay: 0.03s;
-    -o-transition-delay: 0.03s;
-    transition-delay: 0.03s;
+    -webkit-transition-delay: 0.25s;
+    -moz-transition-delay: 0.25s;
+    -ms-transition-delay: 0.25s;
+    -o-transition-delay: 0.25s;
+    transition-delay: 0.25s;
     -webkit-transition-duration: 0;
     -moz-transition-duration: 0;
     -ms-transition-duration: 0;
@@ -435,25 +435,29 @@ input[type=search] {
 }
 .list-item.ng-enter,
 .list-item.ng-leave {
-    -webkit-transition: 0.35s linear all;
-    -moz-transition: 0.35s linear all;
-    -ms-transition: 0.35s linear all;
-    -o-transition: 0.35s linear all;
-    transition: 0.35s linear all;
+    -webkit-transition: 0.4s linear all;
+    -moz-transition: 0.4s linear all;
+    -ms-transition: 0.4s linear all;
+    -o-transition: 0.4s linear all;
+    transition: 0.4s linear all;
 }
-.list-item.ng-enter { 
+.list-item.ng-enter {
+    height: 0;
     transform: scale(1) translateX(100%) translateZ(0)
 }
 
-.list-item.ng-enter.ng-enter-active { 
+.list-item.ng-enter.ng-enter-active {
+    height: 60px;
     transform: scale(1) translateX(0) translateZ(0)
 }
-.list-item.ng-leave { 
+.list-item.ng-leave {
+    height: 60px;
     opacity: 1;
     transform: scale(1) translateX(0) translateZ(0)
     
 }
-.list-item.ng-leave.ng-leave-active {  
+.list-item.ng-leave.ng-leave-active { 
+    height: 0;
     opacity: 0;
     overflow:hidden;
     transform: scale(1) translateX(-100%) translateZ(0);
