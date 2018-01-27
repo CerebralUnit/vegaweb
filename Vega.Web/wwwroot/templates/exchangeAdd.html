@@ -1,0 +1,15 @@
+﻿<div>
+    <h2 class="add-title"><span class="icon2x {{exchange.name.toLowerCase().replace('-', '').replace(' ', '-').replace('.', '') }}"></span><span>{{exchange.name.toUpperCase()}}</span> </h2>
+    <div class="add-form">
+        <md-input-container>
+            <label>API Key</label>
+            <input ng-model="user.title">
+        </md-input-container>
+        <md-input-container>
+            <label>API Secret</label>
+            <input ng-model="user.title">
+        </md-input-container>
+        <span class="danger">Important: Generate a new API key and do not use it outside of this app.</span>
+        <md-button class="md-primary md-hue-1">Save</md-button>
+    </div>
+</div>

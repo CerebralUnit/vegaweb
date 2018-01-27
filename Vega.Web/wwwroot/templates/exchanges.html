@@ -14,13 +14,13 @@
     <div class="exchange-body cell"> 
         <div class="list"> 
             <ul class="list exchanges">
-                <li class="list-item" ng-repeat="exchange in filteredExchanges = (exchanges | filter: exchangeFilter | nameFilter: filters.exchange)" >
+                <li class="list-item" ng-click="exchange.mine ?  goTo('/exchange/' + exchange.name.toLowerCase()) : goTo('/exchange/add/' + exchange.name.toLowerCase())" ng-repeat="exchange in filteredExchanges = (exchanges | filter: exchangeFilter | nameFilter: filters.exchange)">
                     <span class="transaction-exchange icon {{exchange.name.toLowerCase().replace('-', '').replace(' ', '-').replace('.', '') }}"></span>
                     <span class="exchange-name">{{exchange.name}}</span>
-                    <span class="exchange-amount positive">+10,200.00 USDT</span>
+                    <span class="exchange-amount positive" ng-if="exchange.mine">+10,200.00 USDT</span>
+                    <span class="exchange-add-button" ng-if="!exchange.mine">&plus;</span>
                 </li>
-                <li class="list-item default" ng-show="!filteredExchanges.length">
-                   
+                <li class="list-item default" ng-show="!filteredExchanges.length"> 
                     <span class="exchange-name">No Matches</span> 
                 </li>
             </ul>
