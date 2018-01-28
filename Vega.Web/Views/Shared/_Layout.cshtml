@@ -79,19 +79,43 @@
 
     <script>
         var vega = angular.module('vega', ['webicon', 'ngRoute','ngAnimate', 'ngFx', 'ngMaterial', 'ngTouch']);
-        vega.controller('globalCtrl', function ($scope, $location) {
+        vega.controller('globalCtrl', function ($scope, $location, $http) {
             $scope.location = $location.path();
+            
             $scope.prevLocation = 0;
+            
             $scope.goTo = function (path) {
                 $location.path(path);
-            }
+            };
+            $scope.balances = [];
+            $scope.accountInfo = {};
+            $scope.totalBalance = 0;
             $scope.pages = {
                 "/": 0,
                 "/exchanges": 1,
                 "/portfolio": 2,
                 "/trade": 3
-            }
+            };
+            
+            $scope.recentTransactions = [];
+            $http.get("/api/getbalances").then(function(response){
+        
+                $scope.balances = response.data;
+            
+                $scope.balances.map(function(balance){
+                    $scope.totalBalance += balance.total*balance.currentValueUSD;
+                });
+            
+            }, function(){
 
+            });
+            
+            $http.get("/api/getrecenttransactions").then(function(response){
+                $scope.recentTransactions = response.data;
+            }, function(){
+
+            });
+          
             $scope.nextPage = function () {
                 var pageIndex = $scope.pages[$scope.location];
                 var pages = Object.keys($scope.pages);

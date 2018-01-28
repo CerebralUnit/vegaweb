@@ -4,7 +4,7 @@
     <div class="main-header header">
 
         <div class="total-balance">
-            <span class="currency-symbol">$</span>22,490.22
+            <span class="currency-symbol">$</span>{{totalBalance.toFixed(2)}}
             <div class="total-balance-label totals-label">Balance</div>
             <div class="sub-display">
                 <div class="grid-x">
@@ -41,75 +41,19 @@
         <div class="list">
             <h4>Transactions</h4>
             <ul class="list transactions">
-                <li>
+                <li ng-repeat="transaction in recentTransactions track by $index">
                     <span class="transaction-date">
-                        <span class="date-month">JAN</span>
-                        <span class="date-day">23</span>
+                        <span class="date-month">{{transaction.date | date : 'MMM'}}</span>
+                        <span class="date-day">{{transaction.date | date : 'dd'}}</span>
                     </span>
                     <span class="transaction-exchange">
-                        <img width="16" height="16" src="/images/binance-icon.png" alt="Alternate Text" />
+                        <span class="transaction-exchange icon {{transaction.exchange.toLowerCase().replace('-', '').replace(' ', '-').replace('.', '') }}"></span>
                     </span>
                     <span class="transaction-status">
-                        <span>DEPOSIT</span>
-                        <span class="transaction-confirmation">CONFIRMED</span>
+                        <span>{{transaction.type}}</span>
+                        <span class="transaction-confirmation" ng-if="transaction.status && transaction.status.length">{{transaction.status}}</span>
                     </span>
-                    <span class="transaction-amount positive">+10,200.00 USDT</span>
-                </li>
-                <li>
-                    <span class="transaction-date">
-                        <span class="date-month">JAN</span>
-                        <span class="date-day">21</span>
-                    </span>
-                    <span class="transaction-exchange">
-                        <img width="16" height="16" src="/images/binance-icon.png" alt="Alternate Text" />
-                    </span>
-                    <span class="transaction-status">
-                        <span>DEPOSIT</span>
-                        <span class="transaction-confirmation">CONFIRMED</span>
-                    </span>
-                    <span class="transaction-amount positive">+400.00 LEND</span>
-                </li>
-                <li>
-                    <span class="transaction-date">
-                        <span class="date-month">JAN</span>
-                        <span class="date-day">23</span>
-                    </span>
-                    <span class="transaction-exchange">
-                        <img width="16" height="16" src="/images/binance-icon.png" alt="Alternate Text" />
-                    </span>
-                    <span class="transaction-status">
-                        <span>DEPOSIT</span>
-                        <span class="transaction-confirmation">CONFIRMED</span>
-                    </span>
-                    <span class="transaction-amount positive">+650.00 APPC</span>
-                </li>
-                <li>
-                    <span class="transaction-date">
-                        <span class="date-month">JAN</span>
-                        <span class="date-day">23</span>
-                    </span>
-                    <span class="transaction-exchange">
-                        <img width="16" height="16" src="/images/binance-icon.png" alt="Alternate Text" />
-                    </span>
-                    <span class="transaction-status">
-                        <span>DEPOSIT</span>
-                        <span class="transaction-confirmation">CONFIRMED</span>
-                    </span>
-                    <span class="transaction-amount positive">+10,200.00 USDT</span>
-                </li>
-                <li>
-                    <span class="transaction-date">
-                        <span class="date-month">JAN</span>
-                        <span class="date-day">23</span>
-                    </span>
-                    <span class="transaction-exchange">
-                        <img width="16" height="16" src="/images/binance-icon.png" alt="Alternate Text" />
-                    </span>
-                    <span class="transaction-status">
-                        <span>DEPOSIT</span>
-                        <span class="transaction-confirmation">CONFIRMED</span>
-                    </span>
-                    <span class="transaction-amount positive">+10,200.00 USDT</span>
+                    <span class="transaction-amount positive">{{transaction.qty}} {{transaction.asset}}</span>
                 </li>
             </ul>
         </div>
