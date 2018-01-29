@@ -162,23 +162,49 @@ namespace Vega.API
         {
             var binance = new BinanceClient(APIKEY, APISEC);
 
-            var account = await binance.GetAccountInfoAsync();
-            var btcValue = await binance.GetPriceAsync("BTCUSDT");
+            var accountTask = binance.GetAccountInfoAsync();
+
+            var btcValueTask = binance.GetPriceAsync("BTCUSDT");
+
             var balances = new List<Balance>();
 
-            foreach(var balance in account.Data.Balances){
-                if (balance.Total == 0 || balance.Asset == "BTC")
-                    continue;
+            await Task.WhenAll(accountTask, btcValueTask);
+
+            var priceTasks = new List<Task<BinanceApiResult<BinancePrice>>>();
+
+            var valueBTC = btcValueTask.Result.Data.Price;
+
+            var balanceResults = accountTask.Result.Data.Balances
+                                                        .Where(b => b.Total > 0)
+                                                        .ToDictionary(x => x.Asset + "BTC");
                 
-                var valueBTC = binance.GetPrice(balance.Asset + "BTC").Data.Price;
-                var ThisBalance = new Balance() { 
-                    Asset = balance.Asset,
-                    Total = balance.Total,
-                    CurrentValueBTC = binance.GetPrice(balance.Asset + "BTC").Data.Price,
-                    CurrentValueUSD = valueBTC*btcValue.Data.Price
-                }; 
+
+            Parallel.ForEach(balanceResults, (balance) =>{
+                priceTasks.Add(binance.GetPriceAsync(balance.Value.Asset + "BTC"));
+            });
+
+            var i = 0;
+
+            await Task.WhenAll(priceTasks); 
+
+            Parallel.ForEach(priceTasks, (task) =>
+            {
+                var balanceResult = balanceResults[task.Result.Data.Symbol];
+
+                var assetName = balanceResult.Asset;
+
+                var ThisBalance = new Balance()
+                {
+                    Asset = assetName,
+                    Total = balanceResult.Total,
+                    CurrentValueBTC = task.Result.Data.Price,
+                    CurrentValueUSD = valueBTC * task.Result.Data.Price
+                };
+
                 balances.Add(ThisBalance);
-            }
+
+                i++; 
+            });
 
             return balances;
         }

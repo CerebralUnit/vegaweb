@@ -43,7 +43,6 @@ namespace Vega.Web.Controllers
             var balances = await exchanges.GetBalances();
 
             return balances;
-        }
-
+        } 
     }
 }
