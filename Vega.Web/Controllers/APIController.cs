@@ -10,9 +10,10 @@ using Vega.API;
 
 namespace Vega.Web.Controllers
 {
-   
+
     public class APIController : Controller
     {
+        private static readonly DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         // GET: api/values
         [HttpGet]
         [Route("api/getrecenttransactions")]
@@ -43,6 +44,49 @@ namespace Vega.Web.Controllers
             var balances = await exchanges.GetBalances();
 
             return balances;
-        } 
+        }
+
+        // GET: api/values
+        [HttpGet]
+        [Route("api/getpriceattime")]
+        public async Task<Dictionary<string, Dictionary<string, decimal>>> GetPriceAtTime([FromQuery] string symbol, [FromQuery] int timestamp )
+        {
+            var time = epoch.AddSeconds(timestamp);
+            DateTimeOffset offset = DateTime.SpecifyKind(time, DateTimeKind.Utc);
+            var exchanges = new Exchanges();
+            var price = await exchanges.GetPriceAtTime(symbol, offset);
+
+            return price;
+        }
+      
+            [HttpGet]
+        [Route("api/gettrades")]
+        public async Task<Dictionary<string, List<Trade>>> GetTrades()
+        {
+            var exchanges = new Exchanges();
+            var trades = await exchanges.GetTrades();
+
+            return trades;
+        }
+        [HttpGet]
+        [Route("api/getentryvalue")]
+        public async Task<decimal> GetEntryValue()
+        { 
+            var exchanges = new Exchanges();
+            var value = await exchanges.GetEntryValue();
+
+            return value;
+        }
+
+        [HttpGet]
+        [Route("api/getcoinyield")]
+        public async Task<Dictionary<string, Yield>> GetCoinYield()
+        {
+            var exchanges = new Exchanges();
+            var yield = await exchanges.GetCoinYield();
+
+            return yield;
+        }
+        
     }
 }

@@ -1,0 +1,26 @@
+﻿<svg viewBox="-{{leftPadding}} -{{topPadding}} {{width}} {{height}}" width="{{width}}" height="{{height}}" version="1 1" xmlns="http://www w3 org/2000/svg" xmlns:xlink="http://www w3 org/1999/xlink">
+    <defs>
+        <marker id="neatchart-markerCircle-{{chartId}}" markerWidth="2" markerHeight="2" refX="1" refY="1" markerUnits="strokeWidth">
+            <circle class="neatchart-marker" cx="1" cy="1" r="1" stroke="none" fill="{{markerColor}}" />
+        </marker>
+        <linearGradient id="neatchart-fadeFromNothing-{{chartId}}" x1="0%" y1="0%" x2="100%" y2="0%" gradientUnits="userSpaceOnUse">
+            <stop offset="0 5%" stop-color="{{lineColor}}" stop-opacity="0"></stop>
+            <stop offset="2%" stop-color="{{lineColor}}" stop-opacity="1"></stop>
+            <stop offset="100%" stop-color="{{lineColor}}" stop-opacity="1"></stop>
+        </linearGradient>
+        {{shadowHtml}}
+    </defs>
+    <g class="neatchart" {{filter}}>
+        {{gridLabels}}
+        <g class="chart__plotLine"
+           fill="none"
+           stroke-width="{{fontSize/3}}"
+           stroke-linejoin="round"
+           stroke-linecap="round"
+           stroke="url(#neatchart-fadeFromNothing-{{chartId}}"
+           marker-end="url(#neatchart-markerCircle-{{chartId}}">
+            <path d="{{chartPoints}}" />
+            {{fillHtml}}
+        </g>
+    </g>
+</svg>

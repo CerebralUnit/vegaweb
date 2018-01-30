@@ -17,7 +17,7 @@
                     <div class="cell small-4">
                         Total Change
                         <div class="sub-display-value">
-                            +2.85%
+                            {{(((totalBalance - entry)/entry)*100).toFixed(2)}}%
                         </div>
                     </div>
                     <div class="cell small-4">
@@ -37,6 +37,25 @@
                 <span class="chart-live">LIVE <span class="indicator"></span></span>
             </div>
             <img src="/images/chart.png" alt="Alternate Text" />
+        </div>
+        <div class="list">
+            <h4>Coins</h4>
+            <ul class="list transactions">
+                <li ng-repeat="balance in balances track by balance.asset">
+                  
+                    <span class="transaction-exchange">
+                        <span class="transaction-exchange icon {{transaction.exchange.toLowerCase().replace('-', '').replace(' ', '-').replace('.', '') }}"></span>
+                    </span>
+                    <span class="transaction-status">
+                        <span>{{balance.asset}}</span>
+                      
+                    </span>
+                    <span>
+                        <img ng-src="https://cryptohistory.org/charts/sparkline/{{balance.asset.toLowerCase()}}-usdt/7d/svg" alt="Alternate Text" />
+                    </span>
+                    <span class="transaction-amount positive">{{balance.currentValueUSD * balance.total | currency}} <span ng-if="yield.hasOwnProperty(balance.asset)">{{yield[balance.asset].GainsUSD | currency}} {{yield[balance.asset].GainPercentage}}%</span></span>
+                </li>
+            </ul>
         </div>
         <div class="list">
             <h4>Transactions</h4>

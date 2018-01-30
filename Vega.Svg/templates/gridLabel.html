@@ -1,0 +1,20 @@
+﻿<rect class="chart__background"
+      fill="{{background}}"
+      x="-{{paddingLeft}}"
+      y="-{{paddingTop}}"
+      width="{{width}}"
+      height="{{height}}" />
+<g class="chart__gridLines"
+   stroke="{{labelColor}}"
+   stroke-opacity="0.4"
+   stroke-width="1"
+   vector-effect="non-scaling-stroke"
+   shape-rendering="crispEdges">
+    <path class="chart__gridLinePaths" d="{{gridLines}}" />
+</g>
+<g class="chart__gridLabels"
+   fill="{{labelColor}}"
+   font-family="monospace"
+   font-size="{{fontSize}}px">
+    {{gridText}}
+</g>

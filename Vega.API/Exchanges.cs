@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Binance.Net;
 using Binance.Net.Objects;
+using CryptoCompare;
 
 namespace Vega.API
 {
@@ -13,11 +14,32 @@ namespace Vega.API
         public List<Transaction> Deposits { get; set; }
         public BinanceWithdrawalList Withdrawals { get; set; } 
     }
+
     public enum TransactionType {
         Trade,
         Deposit,
         Withdrawal
     }
+    public class Yield
+    {
+        public decimal GainsUSD { get; set; }
+        public decimal GainPercentage { get; set; }
+        public decimal TotalEarned { get; set; }
+        public decimal TotalSpent { get; set; }
+        public decimal CurrentBalanceUSD { get; set; }
+        public decimal CurrentCoinTotal { get; set; }
+    }
+    public class Trade
+    {
+        public bool IsBuy { get; set; }
+        public string Asset { get; set; }
+        public string BaseAsset { get; set; }
+        public decimal Quantity { get; set; } 
+        public decimal Price { get; set; }
+        public decimal PriceUSD { get; set; }
+        public decimal TradeValueUSD { get; set; }
+    }
+
     public class Transaction 
     {
         public string Id { get; set; }
@@ -48,10 +70,172 @@ namespace Vega.API
 
         private const string APIKEY = "IaLcC8IpQQ20uLbvPiXS2jAzJwycuRPkFV95K4EsXZ7ERSDL9erRhRs1iEZaPf8X";
         private const string APISEC = "DC7e7sCKMhVIvyE404PctsaBcSZ2ZGR5INkdzOLQMDceNWTbyc7ZMmKj9PYuJBXy";
+
         public Exchanges()
         {
         }
-      
+        
+        public async Task<Dictionary<string, Dictionary<string, decimal>>> GetPriceAtTime(string symbol, DateTimeOffset timestamp)
+        {
+            symbol = symbol.ToUpper();
+            var client = new CryptoCompareClient();
+            var conversions = new List<string>() {
+                "ETH",
+                "BTC",
+                "USD",
+                "EUR"
+            };
+            var priceList = await client.Prices.HistoricalAsync(symbol, conversions, timestamp);
+            var prices = new Dictionary<string, Dictionary<string, decimal>>();
+
+            foreach (var price in priceList[symbol])
+            {
+                if(!prices.ContainsKey(symbol))
+                    prices.Add(symbol, new Dictionary<string, decimal>());
+                 
+                prices[symbol].Add(price.Key, price.Value); 
+            }
+
+            return prices;
+        }
+        public async Task<decimal> GetEntryValue()
+        {
+            var binance = new BinanceClient(APIKEY, APISEC);
+            var depositsTask = await binance.GetDepositHistoryAsync();
+            var priceTasks = new List<Task<Dictionary<string, Dictionary<string, decimal>>>>();
+            
+            foreach (var deposit in depositsTask.Data.List)
+            {
+              
+                priceTasks.Add(GetPriceAtTime(deposit.Asset, deposit.InsertTime));
+            }
+             
+            decimal total = 0 ;
+            var prices = await Task.WhenAll(priceTasks);
+            var priceDict = new Dictionary<string, Dictionary<string, decimal>>();
+            foreach (var price in prices)
+            {
+                foreach(var keyVal in price)
+                {
+                    if(!priceDict.ContainsKey(keyVal.Key))
+                        priceDict.Add(keyVal.Key, keyVal.Value);
+                } 
+            }
+            foreach (var deposit in depositsTask.Data.List)
+            {
+                total += priceDict.ContainsKey(deposit.Asset) && priceDict[deposit.Asset].ContainsKey("USD") ? priceDict[deposit.Asset]["USD"] * deposit.Amount : 0;
+            }
+            return total; 
+        }
+        public async Task<Dictionary<string, Yield>> GetCoinYield()
+        {
+            var binance = new BinanceClient(APIKEY, APISEC);
+            var account = await binance.GetAccountInfoAsync(); 
+            account.Data.Balances = account.Data.Balances.Where(b => b.Total > 0).ToList();
+            var yields = new Dictionary<string, Yield>();
+            var trades = await GetTrades();
+
+            foreach(var keyval in trades)
+            {
+                var symbol = keyval.Key;
+                var inTotal = 0.0m;
+                var outTotal = 0.0m;
+                var currentValue = await GetPriceAtTime(symbol, DateTime.Now);
+                var currentCount = account.Data.Balances.First(x => x.Asset == symbol).Total;
+                var balance = currentCount * currentValue[symbol]["USD"];
+
+                foreach(var trade in keyval.Value)
+                {
+                    if (trade.IsBuy)
+                    {
+                        inTotal += trade.TradeValueUSD;
+                    }
+                    else
+                    {
+                        outTotal += trade.TradeValueUSD;
+                    }
+                }
+                var yield = (balance + outTotal) - inTotal;
+
+                var totalYield = new Yield()
+                {
+                    CurrentBalanceUSD = currentValue[symbol]["USD"] * currentCount,
+                    CurrentCoinTotal = currentCount,
+                    GainPercentage = ((yield / inTotal)*100),
+                    GainsUSD = yield,
+                    TotalSpent = inTotal,
+                    TotalEarned = outTotal + currentValue[symbol]["USD"]
+                };
+               
+                yields.Add(symbol, totalYield);
+            }
+            return yields;
+        }
+        public async Task<Dictionary<string, List<Trade>>> GetTrades()
+        {
+            var binance = new BinanceClient(APIKEY, APISEC);
+
+            var account = await binance.GetAccountInfoAsync();
+
+            account.Data.Balances = account.Data.Balances.Where(b => b.Total > 0).ToList();
+
+            var tradeTasks = new List<Task<BinanceApiResult<BinanceTrade[]>>>();
+            var tradeAssets = new List<BinanceBalance>();
+            var baseAssets = new List<string>();
+            foreach (var balance in account.Data.Balances)
+            {
+                if (balance.Asset == "ETH" || balance.Asset == "BTC")
+                    continue;
+
+                tradeAssets.Add(balance);
+                baseAssets.Add("ETH");
+                tradeTasks.Add( binance.GetMyTradesAsync(balance.Asset + "ETH") );
+
+                tradeAssets.Add(balance);
+                baseAssets.Add("BTC"); 
+                tradeTasks.Add( binance.GetMyTradesAsync(balance.Asset + "BTC") );
+            }
+
+            var Trades = await Task.WhenAll(tradeTasks);
+            var TradeData = new Dictionary<string, List<Trade>>();
+            var i = 0;
+           
+
+            foreach(var coin in Trades)
+            {
+                if (coin.Data == null || coin.Data.Count() == 0)
+                {
+                    i++; 
+                    continue;
+                }
+
+                var asset = tradeAssets[i].Asset;
+
+                if (!TradeData.ContainsKey(asset))
+                    TradeData.Add(asset, new List<Trade>());
+
+                foreach(var trade in coin.Data)
+                {
+                    var price = await GetPriceAtTime(baseAssets[i], trade.Time);
+                    var USDVal = price[baseAssets[i]]["USD"];
+                    var converted = new Trade()
+                    {
+                            Asset = asset,
+                            BaseAsset = baseAssets[i],
+                            IsBuy = trade.IsBuyer,
+                            Price = trade.Price,
+                            PriceUSD = USDVal,
+                            Quantity = trade.Quantity,
+                            TradeValueUSD = trade.Quantity * USDVal * trade.Price
+                    };
+                    TradeData[asset].Add(converted);
+                }
+            
+                i++; 
+            }
+
+            return TradeData;
+        }
         public async Task<List<Transaction>> GetRecentBinanceTransactions()
         {
             
@@ -92,6 +276,7 @@ namespace Vega.API
             var x = 0;
             var y = 0;
             var TradeTransactions = new List<Transaction>();
+
             foreach (var task in await Task.WhenAll(tasks))
             {
                 if (task.Data != null && task.Data.Count() > 0)
@@ -157,6 +342,12 @@ namespace Vega.API
             allTransactions = allTransactions.OrderByDescending(t => t.Date).ToList();
 
             return allTransactions;
+        }
+        public async void GetEntryTotalForExchange()
+        {
+            var binance = new BinanceClient(APIKEY, APISEC);
+     
+            var accountTask = await binance.GetAccountInfoAsync();
         }
         public async Task<List<Balance>> GetBalances()
         {
