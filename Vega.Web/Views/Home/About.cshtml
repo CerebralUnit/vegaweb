@@ -1,7 +1,8 @@
 ﻿@{
-    ViewData["Title"] = "About";
+    ViewData["Title"] = "Test";
 }
-<h2>@ViewData["Title"]</h2>
-<h3>@ViewData["Message"]</h3>
+ @model Vega.Svg.LineChart
 
-<p>Use this area to provide additional information.</p>
+<div style="margin-top: 90px;">
+    @Html.Raw(Model.Render())
+</div>

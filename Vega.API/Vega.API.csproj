@@ -10,6 +10,11 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Binance.Net" Version="2.2.5" />
-    <PackageReference Include="CryptoCompare" Version="0.0.3" />
+    <PackageReference Include="FileCache" Version="2.0.3" />
+    <PackageReference Include="System.Runtime.Caching" Version="4.5.0-preview1-25914-04" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CryptoCompare\CryptoCompare.csproj" />
+    <ProjectReference Include="..\Vega.Svg\Vega.Svg.csproj" />
   </ItemGroup>
 </Project>

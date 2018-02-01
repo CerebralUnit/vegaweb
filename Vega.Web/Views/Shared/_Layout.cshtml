@@ -113,11 +113,11 @@
             //}, function(ex){
             //    console.log(ex);
             //    });
-              getBalances();
+            getBalances();
 
-              $interval(function () {
-                  getBalances();
-              }, 30000);
+            $interval(function () {
+                getBalances();
+            }, 90000);
             $scope.location = $location.path();
             
             $scope.prevLocation = 0;
@@ -136,7 +136,6 @@
             };
             
             $scope.recentTransactions = [];
-           
             
              //$http.get("/api/getrecenttransactions").then(function(response){
              //    $scope.recentTransactions = response.data;

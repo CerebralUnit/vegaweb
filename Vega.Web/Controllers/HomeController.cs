@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Vega.API;
+using Vega.Svg;
 using Vega.Web.Models;
 
 namespace Vega.Web.Controllers
@@ -14,12 +17,33 @@ namespace Vega.Web.Controllers
         {
             return View();
         }
+        [Route("sparklines/{filename?}")]
+        public async Task<IActionResult> SVGIntercept(string filename) {
+            var symbol = filename.ToLower().Replace(".svg", "").ToUpper();
 
-        public IActionResult About()
+            var exchanges = new Exchanges();
+            var chart = await exchanges.GetChart(symbol);
+
+
+            return File(chart, "image/svg+xml");
+        }
+        public async Task<IActionResult> About()
         {
-            ViewData["Message"] = "Your application description page.";
+            var exchanges = new Exchanges();
 
-            return View();
+            var History = await exchanges.GetCoinHistory("XRP", "USDT");
+            var ChartData = new List<KeyValuePair<long, double>>();
+
+            foreach(var candle in History)
+            {
+                var pair = new KeyValuePair<long, double>(candle.Time.Ticks, (double)candle.Close);
+                ChartData.Add(pair);
+            }
+
+            var Chart = new LineChart(ChartData);
+
+           
+            return View(Chart);
         }
 
         public IActionResult Contact()

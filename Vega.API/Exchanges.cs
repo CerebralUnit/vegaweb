@@ -1,10 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Runtime.Caching;
+using System.Text;
 using System.Threading.Tasks;
 using Binance.Net;
 using Binance.Net.Objects;
 using CryptoCompare;
+using Newtonsoft.Json;
+using Vega.Svg;
 
 namespace Vega.API
 {
@@ -60,6 +65,19 @@ namespace Vega.API
         public decimal CurrentValueBTC { get; set; }
         public decimal CurrentValueUSD { get; set; }
     }
+    public class PoloniexHistory
+    {
+ 
+        public long date { get; set; } 
+        public decimal high { get; set; }   
+        public decimal low { get; set; } 
+        public decimal open { get; set; }
+        public decimal close { get; set; }
+        public decimal volume { get; set; }
+        public decimal quoteVolume { get; set; }
+        public decimal weightedAverage { get; set; }
+
+    }
     public class Exchanges
     {
         public static DateTime FromUnixTime(long unixTime)
@@ -74,7 +92,63 @@ namespace Vega.API
         public Exchanges()
         {
         }
-        
+       
+        public async Task<Byte[]> GetChart(string symbol)
+        {
+            FileCache simpleCache = new FileCache();
+             
+            if (simpleCache.Contains(symbol))
+            {
+                return (Byte[])simpleCache[symbol];
+            }
+            else
+            {
+                var History = await GetCoinHistory(symbol, "USD");
+                var ChartData = new List<KeyValuePair<long, double>>();
+
+                foreach (var candle in History)
+                {
+                    var pair = new KeyValuePair<long, double>(candle.Time.Ticks, (double)candle.Close);
+                    ChartData.Add(pair);
+                }
+
+                var Chart = new LineChart(ChartData).Render();
+
+                var Bytes = Encoding.UTF8.GetBytes(Chart);
+                var LastDataPoint = History[History.Count - 1].Time - epoch;
+                var Now = DateTime.Now - epoch;
+                var Policy = new CacheItemPolicy() {
+                    // Expires either in a minute, or 60s after the next data point is supposed to be available
+                    SlidingExpiration = TimeSpan.FromSeconds( Math.Max(60, LastDataPoint.TotalSeconds + 7200 - Now.TotalSeconds + 60))
+                };
+
+                simpleCache.Add(symbol, Bytes, Policy);
+
+                return Bytes;
+               
+            }
+         
+        }
+        public List<PoloniexHistory> GetPoloniexHistory()
+        {
+            var Response = new List<PoloniexHistory>();
+
+            using (WebClient wc = new WebClient())
+            {
+                var json = wc.DownloadString("https://poloniex.com/public?command=returnChartData&currencyPair=BTC_DASH&start=1516827130&end=9999999999&period=7200");
+                Response = JsonConvert.DeserializeObject<List<PoloniexHistory>>(json);
+            }
+
+            return Response; 
+        }
+        public async Task<IReadOnlyList<CandleData>> GetCoinHistory(string fromSymbol, string toSymbol)
+        {
+            var client = new CryptoCompareClient();
+            var History = await client.History.HourAsync(fromSymbol, toSymbol, null,  null, DateTime.Now);
+
+            return History.Data;
+        }
+
         public async Task<Dictionary<string, Dictionary<string, decimal>>> GetPriceAtTime(string symbol, DateTimeOffset timestamp)
         {
             symbol = symbol.ToUpper();

@@ -726,3 +726,34 @@ span.transaction-status {
     font-size: 12px
 
 }
+
+.sparkline {
+    flex: none;
+    padding: 0;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: block;
+    opacity: 0.1;
+}
+
+.list.transactions li {
+    list-style-type: none;
+    padding: 0 16px;
+    font-size: 10px;
+    border-bottom: 1px solid #101c21;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #52555a;
+    display: flex;
+    height: 60px;
+    justify-content: center;
+    align-items: center;
+    position: relative; 
+}
+
+.sparkline > object {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}

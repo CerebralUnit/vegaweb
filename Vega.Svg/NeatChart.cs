@@ -6,6 +6,9 @@ namespace Vega.Svg
 {
     public class NeatChart
     {
+        protected double _origWidth;
+        protected double _origHeight;
+
         public double PaddingLeft { get; set; }
         public double PaddingTop { get; set; }
         public double PaddingRight { get; set; }
@@ -13,6 +16,12 @@ namespace Vega.Svg
         public double Width { get; set; }
         public double Height { get; set; }
         public double FontSize { get; set; }
+        public double YRange { get; set; }
+        public double XRange { get; set; }
+        public double YMax { get; set; }
+        public double YMin { get; set; }
+        public long XMin { get; set; }
+        public long XMax { get; set; }
 
         public string Id { get; set; }
         public string LineColor { get; set; }
@@ -30,14 +39,53 @@ namespace Vega.Svg
         public bool YAxisEnabled { get; set; }
         public bool XAxisEnabled { get; set; }
         public bool YAxisZero { get; set; }
-        public double YRange { get; set; }
-        public double XRange { get; set; }
-        public double YMax { get; set; }
-        public double YMin { get; set; }
-        public double XMin { get; set; }
-        public double XMax { get; set; }
         public bool xAxisEnabled { get; set; }
+       
+        public NeatChart()
+        {
+            Width         = 400;
+            Height        = 80;
+            LineColor     = "#000";
+            MarkerColor   = "#000";
+            LabelColor    = "#000";
+            Smoothed      = false;
+            FontSize      = 15;
+            YAxisEnabled  = true;
+            XAxisEnabled  = true;
+            YAxisZero     = false;
+            Filled        = false;
+            Background    = "none";
+            Shadow        = "none"; 
+            PaddingTop    = FontSize;
+            PaddingLeft   = PaddingRight = FontSize/2;
+            PaddingRight  = 10;
+            PaddingBottom = FontSize*1.5;
+        }
+        protected void setWindow(List<KeyValuePair<long, double>> chartData)
+        {
+            double x = 0;
+            double y = 0;
+             
+            this.XMax =  chartData[chartData.Count - 1].Key; 
+            this.XMin =  chartData[0].Key;
 
+            this.XRange = this.XMax - this.XMin;
+            this.YMin = (YAxisZero ? 0 : double.MaxValue);
+            this.YMax = -double.MaxValue;
+
+            foreach (var data in chartData) {
+                x = data.Key;
+                y = data.Value;
+                 
+                if (y < this.YMin) 
+                    this.YMin = y;  
+
+                if (y > this.YMax)
+                    this.YMax = y;   
+            }
+
+            this.YRange = this.YMax - this.YMin;
+        }
         public string DisplayNDecimal(double dbValue, int nDecimal)
         {
             var decimalPoints = new StringBuilder("0");
@@ -57,74 +105,83 @@ namespace Vega.Svg
 
             return v == 0 ? v : v.ToString().Length - 1;
         }
+
         protected string LabelFormat(double Float, double places, double minPlaces = 0)
         {
             var value = DisplayNDecimal(Float, (int)Math.Max(minPlaces, places));
             // add a trailing space if there's no decimal
             return value.IndexOf('.') == -1 ? value + '.' : value;
         }
+
         protected double TransformY(double y)
         {
             return Math.Round((this.YMax - y) / this.YRange * this.Height, 2);
         }
+
         protected double TransformX(double x)
         {
             return Math.Round((x - this.XMin) / this.XRange * this.Width , 2);
         }
-        protected void buildGridLabelXML(int width, int height)
+
+        protected string buildGridLabelXML()
         {
-            this.Width = width - this.PaddingLeft - this.PaddingRight;
-            this.Height = height - this.PaddingTop - this.PaddingBottom;
-            var GridText = "";
+            var origWidth = this.Width;
+            var origHeight = this.Height;
+            var origLeftPadding = this.PaddingLeft;
+            this.Width = this.Width - this.PaddingLeft - this.PaddingRight;
+            this.Height = this.Height - this.PaddingTop - this.PaddingBottom;
+
+            var GridText  = "";
             var GridLines = "";
+
             if (YAxisEnabled)
             {
                 var NumYLabels = 4 + Math.Ceiling(this.Height / this.FontSize / 4);
                 var LabelInterval = this.YRange / NumYLabels;
                 var LabelModulation = Math.Pow(10, (1 + Math.Floor(-Math.Log((double)this.YRange / (double)NumYLabels, 10))));
+                
                 // 1 here is a fudge factor so we get multiples of 2.5 more often
-                if ((LabelInterval * LabelModulation) % 2.5 < ((LabelInterval * LabelModulation) % 2) + 1)
-                {
-                    LabelModulation /= 2.5;
-                }
-                else
-                {
-                    LabelModulation /= 2;
-                }
+                if ((LabelInterval * LabelModulation) % 2.5 < ((LabelInterval * LabelModulation) % 2) + 1) 
+                    LabelModulation /= 2.5; 
+                else 
+                    LabelModulation /= 2; 
+
                 LabelInterval = Math.Ceiling(LabelInterval * LabelModulation) / LabelModulation;
+
                 var LabelPrecision = this.GetPrecision(LabelInterval);
                 var DigitsLeft = Math.Max(1, Math.Ceiling(Math.Log(this.YMax, 10)));
                 var Commas = Math.Max(0, Math.Floor((DigitsLeft - 1) / 3));
+
                 this.PaddingLeft = this.FontSize * 0.65 * (
                   2.5 + DigitsLeft + Commas + this.GetPrecision(LabelInterval)
                 );
-                this.Width = width - this.PaddingLeft - this.PaddingRight;
+
+                 this.Width = origWidth - this.PaddingLeft - this.PaddingRight;
+
                 // Top and bottom grid lines
                 GridLines += "M0 0 " + this.Width + " 0 " + " M0 " + this.Height + " L" + this.Width + " " + this.Height + " ";
                 // Top and bottom grid labels
                 GridText +=
                   "<text text-anchor=\"end\" x=\"" + (-0.4 * this.FontSize) + "\" y=\"" + (this.FontSize * 0.4) + "\">" + (this.LabelFormat(this.YMax, LabelPrecision + 1)) + "</text>" +
-                "<text text-anchor=\"end\" x=\"" + (-0.4 * this.FontSize) + "\" y=\"" + (this.FontSize * 0.4 + this.Height) + "\">" + (this.LabelFormat(this.YMin, LabelPrecision + 1)) + "</text>";
+                  "<text text-anchor=\"end\" x=\"" + (-0.4 * this.FontSize) + "\" y=\"" + (this.FontSize * 0.4 + this.Height) + "\">" + (this.LabelFormat(this.YMin, LabelPrecision + 1)) + "</text>";
+                
                 // Main labels and grid lines
                 for (
-                 var LabelY = this.YMin - (this.YMin % LabelInterval) + LabelInterval; // Start at the first \"nice\" Y value > min
+                  var LabelY = this.YMin - (this.YMin % LabelInterval) + LabelInterval; // Start at the first \"nice\" Y value > min
                   LabelY < this.YMax; // Keep going until max
                   LabelY += LabelInterval // Add Interval each iteration
                 )
                 {
                     var LabelHeight = this.TransformY(LabelY);
-                    if ( // label is not too close to the min or max
-                      LabelHeight < this.Height - 1.5 * this.FontSize &&
-                      LabelHeight > this.FontSize * 1.5
-                    )
+
+                    // label is not too close to the min or max
+                    if ( LabelHeight < this.Height - 1.5 * this.FontSize && LabelHeight > this.FontSize * 1.5 )
                     {
                         GridText += "<text text-anchor=\"end\" x=\"-" + (this.FontSize) + "\" y=\"" + (LabelHeight + this.FontSize * 0.4) + "\">" + this.LabelFormat(LabelY, LabelPrecision) + "</text>";
                         GridLines += " M-" + (this.FontSize * 0.65) + "," + LabelHeight + " " + this.Width + "," + LabelHeight;
                     }
-                    else if ( // label is too close
-                    LabelHeight < this.Height - this.FontSize * 0.75 &&
-                    LabelHeight > this.FontSize * 0.75
-                  )
+                    // label is too close
+                    else if ( LabelHeight < this.Height - this.FontSize * 0.75 && LabelHeight > this.FontSize * 0.75 )
                     {
                         GridLines += " M" + ( // move grid line over when it"s very close to the min or max label
                           LabelHeight < this.Height - this.FontSize / 2 && LabelHeight > this.FontSize / 2 ? 0 : this.FontSize / 2
@@ -134,14 +191,16 @@ namespace Vega.Svg
             }
             if (xAxisEnabled)
             {
-                var TimeIntervals = new Dictionary<string, int>() {
+                var TimeIntervals = new Dictionary<string, int>()
+                {
                     { "minutes", 60 },
                     { "hours", 60 * 60},
                     { "days", 24 * 60 * 60},
                     { "years", 365 * 24 * 60 * 60 }
                 };
 
-                var TimeIntervalLabel = new Dictionary<string, string>() {
+                var TimeIntervalLabel = new Dictionary<string, string>()
+                {
                     { "minutes", "g:ia" },
                     { "hours", "D ga"},
                     { "days", "M j"},
@@ -153,7 +212,8 @@ namespace Vega.Svg
                 var xLabelFormat = TimeIntervalLabel[Scale];
 
              
-                foreach (var  KevVal in TimeIntervals) {
+                foreach (var  KevVal in TimeIntervals)
+                {
                     if (this.XRange / NumXLabels < KevVal.Value) 
                         break;
 
@@ -165,17 +225,19 @@ namespace Vega.Svg
 
                 xLabelInterval -=  xLabelInterval % TimeIntervals[Scale];
 
-                for (  var labelX = this.XMin - (this.XMin % TimeIntervals[Scale]) + xLabelInterval;
-                        labelX < this.XMax;
-                        labelX += xLabelInterval
+                for ( var labelX = this.XMin - (this.XMin % TimeIntervals[Scale]) + xLabelInterval;
+                          labelX < this.XMax;
+                          labelX += xLabelInterval
                     )
                 {
                     var LabelXCoord = this.TransformX(labelX);
+
                     GridLines += "M" + LabelXCoord + " 0 " + LabelXCoord + " " + this.Height + " ";
 
                     var xLabelAlignment = (this.Width - LabelXCoord > this.FontSize* 2 ? (LabelXCoord > this.FontSize* 2 ? "middle" : "start") : "end");
 
-                    if (this.Width - LabelXCoord > this.FontSize* 2) {
+                    if (this.Width - LabelXCoord > this.FontSize* 2)
+                    {
                         if (LabelXCoord > this.FontSize * 2)
                         {
                             GridText += "<text text-anchor=\"middle\" y=\"" + (this.Height + this.FontSize) + "\" x=\"" + LabelXCoord + "\">" + new DateTime((long) labelX) + "</text>";
@@ -189,7 +251,26 @@ namespace Vega.Svg
                     }
                 }
             } 
-            return;
+            return "<rect class=\"chart__background\" " +
+                    "fill = \"" +  Background  + "\" " +
+                    "x = \"-" + PaddingLeft  + "\" " +
+                    "y = \"-" +  PaddingTop  + "\" " +
+                    "width = \"" +  origWidth  + "\" " +
+                    "height = \"" + origHeight + "\" " +
+                  "/>" +
+                  "<g class=\"chart__gridLines\" " +
+                    "stroke =\"" + LabelColor + "\" " +
+                    "stroke-opacity=\"0.4\" " +
+                    "stroke-width=\"1\" " +
+                    "vector-effect=\"non-scaling-stroke\" " +
+                    "shape-rendering=\"crispEdges\">" +
+                    "<path class=\"chart__gridLinePaths\" d=\"" + GridLines + "\" />" +
+                  "</g>" +
+                  "<g class=\"chart__gridLabels\" " +
+                    "fill=\"" + LabelColor + "\" " +
+                    "font-family=\"monospace\" " +
+                    "font-size=\"" + FontSize + "px\">" +
+                    GridText + "</g>";
         }
     }
 }
